@@ -1,0 +1,41 @@
+nav {
+  background-color: #88aabc; /* Background color of the navbar */
+  color: #fff; /* Text color */
+  padding: 10px 0; /* Padding only top and bottom */
+  width: 100%; /* Make navbar full width */
+  position: fixed; /* Fix navbar position */
+  top: 0; /* Place navbar at the top */
+  left: 0; /* Align navbar to the left */
+  z-index: 999; /* Ensure navbar stays on top */
+  box-sizing: border-box;
+  display: flex;/* Center the content horizontally */
+}
+
+ul {
+  list-style-type: none; /* Remove bullet points from the list */
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: inline; /* Display list items horizontally */
+  margin-right: 20px; /* Spacing between list items */
+  margin-left: 20px;
+}
+
+a {
+  color: #fff; /* Text color of the links */
+  text-decoration: none; /* Remove underline from links */
+}
+
+a:hover {
+  text-decoration: underline; /* Underline links on hover */
+}
+
+img{
+  height: 25px;
+  width: 25px;
+  color: blanchedalmond;
+  background-color: rgb(170, 69, 186);
+  border-radius: 5px;
+}
