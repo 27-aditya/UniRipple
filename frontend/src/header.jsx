@@ -1,22 +1,17 @@
-import React from 'react';
-import './header.css';
+import Logo from './handshake.svg';
+import User from './user.svg';
 
-const Header = () => {
+function Header() {
   return (
-    <nav>
-      <ul>
-        <li><img src="./src/handshake.svg"></img></li>
-        <li><a href="#">UniRipple</a></li>
-        <li><a></a></li>
-        <li><a href="#"></a>UwU</li>
-        <li><a></a></li>
-        <li><a href="#">Create</a></li>
-        <li><a></a></li>
-        <li><a href="#">LogIn</a></li>
-        <li><a></a></li>
-        <li><a href="#">LogOut</a></li>
-      </ul>
-    </nav>
+    <div>
+      <header className=' w-full bg-cutcolor-darkgrey p-2'>  
+        <div className='mx-4 flex'>
+          <img src={Logo} className="w-8 h-8 mr-4 ml-2" alt="logo" />
+          <h1 className='text-2xl font-bold text-gray-300 px-3'>UniVerse</h1>
+          <button className="w-7 h-7 ml-auto rounded-md"><img src={User}  alt="usericon" /></button>
+        </div>
+      </header>
+    </div>
   );
 }
 

@@ -1,47 +1,15 @@
-import React from 'react';
-
-function Thread({ title, content, upvotes, onUpvote, onComment }) {
+function Thread() {
   return (
-    <div style={threadStyle}>
-      <h2 style={titleStyle}>{title}</h2>
-      <p style={contentStyle}>{content}</p>
-      <div style={buttonContainerStyle}>
-        <button style={buttonStyle} onClick={onUpvote}>Upvote {upvotes}</button>
-        <button style={buttonStyle} onClick={onComment}>Comment</button>
+    <div className="bg-gray-900 px-6 p-6 text-gray-800">
+        <div className="border border-orange-300 bg-orange-200 mx-3 rounded-md w-100 h-50 p-2">
+          <h5 className="text-gray-500 text-sm">Posted by LORd 5 hours ago</h5>
+          <h2 className="text-xl mb-3">Lorem Ipsum  Lord</h2>
+          <div className="text-sm leading-6">
+            I am programmer
+          </div>
+        </div>
       </div>
-    </div>
   );
 }
 
-// CSS-in-JS styles
-const threadStyle = {
-  border: '1px solid #ccc',
-  borderRadius: '8px',
-  padding: '20px',
-  marginBottom: '20px',
-};
-
-const titleStyle = {
-  fontSize: '24px',
-  marginBottom: '10px',
-};
-
-const contentStyle = {
-  marginBottom: '10px',
-};
-
-const buttonContainerStyle = {
-  display: 'flex',
-};
-
-const buttonStyle = {
-  marginRight: '10px',
-  padding: '8px 16px',
-  backgroundColor: '#28a745',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
-
-export default Thread;
+export default Thread;  
