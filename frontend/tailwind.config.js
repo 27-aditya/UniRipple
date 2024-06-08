@@ -5,9 +5,10 @@ module.exports = {
     extend: {
       colors: {
         cutcolor:{
-          darkgrey: '#383c4a',
-          lightgrey: '#4b5162',
-          blue: '#74a9e7',
+          darkgrey: '#1B262C',
+          darkblue: '#0F4C75',
+          blue: '#3282B8',
+          lightblue: '#BBE1FA',
         },
       },
     },

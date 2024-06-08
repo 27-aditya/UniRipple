@@ -4,6 +4,7 @@ import Header from './header';
 import PostForm from './postform';
 import Thread from './thread';
 import AuthModal from './authmodal.jsx';
+import Posts from './post.jsx';
 
 function App() {
   const [showAuthModal, setShowAuthModal] = useState(true);
@@ -17,6 +18,7 @@ function App() {
       <Header/>
       <PostForm/>
       <Thread/>
+      <Posts/>
     </div>
   );
 }

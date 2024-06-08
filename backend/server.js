@@ -6,11 +6,17 @@ import { Sequelize, DataTypes } from 'sequelize';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const port = 4000;
+// if any error occurs might be due to .env
+const jwtkey = process.env.JWT_SECRET;
+const dbowner = process.env.DB_USER;
+const dbpass = process.env.DB_PASSWORD;
 
-const sequelize = new Sequelize('UniVerse', 'postgres', '123', {
+const sequelize = new Sequelize('UniVerse', process.env.DB_USER, process.env.DB_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres',
   port: 5432,
@@ -35,6 +41,58 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
 });
+
+const Post = sequelize.define('Post', {
+  userId:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    }
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+
+const Comment = sequelize.define('Comment', {
+  postId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Post,
+      key: 'id',
+    }
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: User,
+      key: 'id',
+    }
+  },
+  body: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+});
+
+User.hasMany(Post, { foreignKey: 'userId' });
+Post.belongsTo(User, { foreignKey: 'userId' });
+
+User.hasMany(Comment, { foreignKey: 'userId' });
+Comment.belongsTo(User, { foreignKey: 'userId' });
+
+Post.hasMany(Comment, { foreignKey: 'postId' });  
+Comment.belongsTo(Post, { foreignKey: 'postId' });
+
 
 sequelize.sync({ force: false }).then(() => {
   console.log('Database synced');
@@ -66,7 +124,7 @@ app.post('/register', async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const token = jwt.sign({ username, email, password: hashedPassword }, 'my$3cr3tK3y@123!', { expiresIn: '1h' });
+    const token = jwt.sign({ username, email, password: hashedPassword }, jwtkey, { expiresIn: '1h' });
 
     const url = `http://localhost:4000/verify/${token}`;
     const passw = process.env.SERVER_MAIL_PASSWORD;
@@ -120,9 +178,60 @@ app.get('/verify/:token', (req, res) => {
   
 });
 
-
 app.get('/', (req, res) => {
   res.send('Hello World');
+});
+
+app.post('/posts', async(req, res) => {
+  const {userId ,title, body} = req.body;
+
+  if (!title || !userId || !body) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  try {
+    const post = await Post.create({userId, title, body});
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating post', error });
+  }
+});
+
+app.get('/posts', async (req, res) => {
+  try {
+    const posts = await Post.findAll({
+      include: [
+        { model: User, attributes: ['username'] },
+        { 
+          model: Comment,
+          include: { model: User, attributes: ['username'] }
+        }
+      ],
+      order: [
+        ['createdAt', 'ASC'],
+        [{ model: Comment }, 'createdAt', 'ASC']
+      ]
+    });
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error('Error fetching posts:', error); // Log the error
+    res.status(500).json({ message: 'Error fetching posts', error });
+  }
+});
+
+app.post('/comments', async(req, res) => {
+  const {postId, userId, body} = req.body;
+
+  if (!postId || !userId || !body) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  try {
+    const comment = await Comment.create({postId, userId, body});
+    res.status(201).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating comment', error });
+  }
 });
 
 app.listen(4000, () => {
