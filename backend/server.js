@@ -162,7 +162,7 @@ app.get('/verify/:token', (req, res) => {
   const token = req.params.token;
  
   try {
-    const decodedToken = jwt.verify(token, 'my$3cr3tK3y@123!');
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const { username, email, password } = decodedToken;
 
     User.create({ username, email, password })
@@ -176,6 +176,26 @@ app.get('/verify/:token', (req, res) => {
     res.status(400).json({ message: 'Invalid token', error });
   }
   
+});
+
+app.post('/login', async (req, res) => {  
+  const { username, password } = req.body;
+
+  try {
+    const user = await User.findOne({ where: { username } }); 
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }    
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
+    const token = jwt.sign({ username }, jwtkey, { expiresIn: '1h' });
+    res.cookie
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) { 
+    res.status(500).json({ message: 'Error logging in', error });
+  }   
 });
 
 app.get('/', (req, res) => {
