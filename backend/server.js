@@ -16,6 +16,20 @@ const jwtkey = process.env.JWT_SECRET;
 const dbowner = process.env.DB_USER;
 const dbpass = process.env.DB_PASSWORD;
 
+const authenticateToken = (req, res, next) => {
+  const token = req.cookies.token || req.headers['authorization']; // if error  remove the part from the ?
+  if (!token) {
+    return res.sendStatus(403);
+  }
+  jwt.verify(token, jwtkey, (err, user) => {
+    if (err) {
+      return res.sendStatus(403);
+    }
+    req.user = user;
+    next();
+  });
+};
+
 const sequelize = new Sequelize('UniVerse', process.env.DB_USER, process.env.DB_PASSWORD, {
   host: 'localhost',
   dialect: 'postgres',
@@ -83,7 +97,6 @@ const Comment = sequelize.define('Comment', {
     allowNull: false,
   },
 });
-
 User.hasMany(Post, { foreignKey: 'userId' });
 Post.belongsTo(User, { foreignKey: 'userId' });
 
@@ -141,7 +154,7 @@ app.post('/register', async (req, res) => {
     });
 
     const mailOptions = {
-      from: 'kambleadity946@gmail.com',
+      from: 'kambleaditya946@gmail.com',
       to: email,
       subject: 'Verify your email',
       text: `Click on this link to verify your email: ${url}`,
@@ -198,6 +211,26 @@ app.post('/login', async (req, res) => {
   }   
 });
 
+/*app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { username } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
+    const token = jwt.sign({ username }, jwtkey, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true });
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    res.status(500).json({ message: 'Error logging in', error });
+  }
+});
+*/
+
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
@@ -224,7 +257,7 @@ app.get('/posts', async (req, res) => {
         { model: User, attributes: ['username'] },
         { 
           model: Comment,
-          include: { model: User, attributes: ['username'] }
+          include: { model: User, attributes: ['id', 'username'] }
         }
       ],
       order: [
@@ -239,6 +272,17 @@ app.get('/posts', async (req, res) => {
   }
 });
 
+app.get('/user', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ where: { username: req.user.username } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user', error });
+  }
+});
 app.post('/comments', async(req, res) => {
   const {postId, userId, body} = req.body;
 
@@ -248,7 +292,14 @@ app.post('/comments', async(req, res) => {
 
   try {
     const comment = await Comment.create({postId, userId, body});
-    res.status(201).json(comment);
+    const user = await User.findByPk(userId);
+    res.status(201).json({
+      id: comment.id,
+      postId: comment.postId,
+      userId: comment.userId,
+      body: comment.body,
+      username: user.username, 
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error creating comment', error });
   }

@@ -5,7 +5,7 @@ import PostForm from './postform';
 import Thread from './thread';
 import AuthModal from './authmodal.jsx';
 import Posts from './post.jsx';
-
+import PostFormModal from './postformmodal.jsx';
 
 function App() {
 
@@ -19,9 +19,9 @@ function App() {
     <div>
       <Header/>
       <PostForm/>
-      {showModal && <AuthModal show={showModal} onClose={handleCloseModal} />}
-      <Thread/>
+      {showModal && <AuthModal show={showModal} onClose={handleCloseModal}/>}
       <Posts/>
+      <PostFormModal/>
     </div>
   );
 }

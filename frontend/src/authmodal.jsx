@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect} from 'react';
 import axios from 'axios';
-import AuthModalContext from './authmodalcontext';
-import UserContext from './usercontent';
+
 
 function AuthModal({ show, onClose }) {
   const [modalType, setModalType] = useState("login");
@@ -22,29 +21,27 @@ function AuthModal({ show, onClose }) {
     }
   }, [show]);
   
-  //const modalContext = useContext(AuthModalContext);
-  //const user = useContext(UserContext);
 
-  //const visibleClass = modalContext.show ? 'block' : 'hidden';
-  //if (modalContext.show && modalContext.show !== modalType) {
-  //  setModalType(modalContext.show);
-  //}
 
   const register = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const collegeDomain = "nitc.ac.in";
+    const emailDomain = email.split('@')[1];
+    //if (emailDomain !== collegeDomain) {
+      //alert('Please use your college email');
+      //return;
+    //}
     try {
       const result = await axios.post('http://localhost:4000/register', {
         username,
         email,
         password
       });
-      //user.setUser({username})
-      //modalContext.setShow(false);
+
       console.log(result.data);
       if(result.data.success){
         alert('Registered Successfully');
-         // Close the modal on successful registration
       }
       onClose();
     } catch (error) {
@@ -62,13 +59,11 @@ function AuthModal({ show, onClose }) {
         username,
         password
       });
-      //user.setUser({username})
-      //modalContext.setShow(false);
+
       console.log(result.data);
       onClose();
       if(result.data.success){
         alert('Logged in Successfully');
-         // Close the modal on successful login
       }
     } catch (error) {
       console.error('There was an error logging in the user!', error.response.data);
@@ -77,7 +72,7 @@ function AuthModal({ show, onClose }) {
     }
   };
 
-  if (!show) return null; // Render nothing if show is false
+  if (!show) return null; 
 
   return (
     <div className={`top-0 left-0 w-screen h-screen z-20 flex content-center fixed` } style={{ backgroundColor: 'rgba(0,0,0,.6)' }}>
