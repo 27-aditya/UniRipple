@@ -113,6 +113,7 @@ sequelize.sync({ force: false }).then(() => {
   console.error('Database synchronization error:', error);
 });
 
+app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -211,42 +212,25 @@ app.post('/login', async (req, res) => {
   }   
 });
 
-/*app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const user = await User.findOne({ where: { username } });
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
-    const token = jwt.sign({ username }, jwtkey, { expiresIn: '1h' });
-    res.cookie('token', token, { httpOnly: true });
-    res.status(200).json({ message: 'Login successful', token });
-  } catch (error) {
-    res.status(500).json({ message: 'Error logging in', error });
-  }
-});
-*/
-
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.post('/posts', async(req, res) => {
-  const {userId ,title, body} = req.body;
 
-  if (!title || !userId || !body) {
+app.post('/posts', async(req, res) => {
+  const {userId ,title, content} = req.body;
+  console.log(userId);
+  console.log(title);
+  console.log(content);
+  if (!title || !userId || !content) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
-
   try {
-    const post = await Post.create({userId, title, body});
+    const post = await Post.create({userId, title, content});
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: 'Error creating post', error });
+    console.log(error);
   }
 });
 
