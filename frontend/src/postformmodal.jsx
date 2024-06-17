@@ -9,17 +9,14 @@ function PostFormModal({ show, onClose }) {
     console.log(title);
     const content = document.getElementById('content').value; 
     console.log(content);
-    //const user = await axios.get('http://localhost:4000/user');
-    //console.log(user);
     try {
-      // the user endpoint gives error
-      //const user = await axios.get('http://localhost:4000/user');
       const result = await axios.post('http://localhost:4000/posts', {
         userId: 15,
         title,
         content
       });
       console.log(result.data);
+      onClose();
       if(result.status === 201){
         alert('Post Created Successfully');
       }else {
@@ -27,14 +24,10 @@ function PostFormModal({ show, onClose }) {
       }
     } catch (error) {
       if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
         console.error('There was an error creating the post!', error.response.data);
       } else if (error.request) {
-        // The request was made but no response was received
         console.error("The request was made but no response was received", error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
         console.error('Error', error.message);
       }
     }
@@ -46,7 +39,7 @@ function PostFormModal({ show, onClose }) {
         <div className="modal-content mx-auto bg-gray-800 w-3/4 sm:w-1/2 md:w-1/3 p-5 flex flex-col text-gray-200 rounded-xl shadow-lg">
           <div className="modal-header flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold">Create a Post</h2>
-            <span className="close text-gray-400 cursor-pointer text-xl" >&times;</span>
+            <button className="close text-gray-400 cursor-pointer text-xl" onClick={onClose}>&times;</button>
           </div>
           <div className="modal-body flex justify-center">
             <form className="w-full">

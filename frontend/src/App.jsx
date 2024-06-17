@@ -15,13 +15,19 @@ function App() {
     console.log('handleCloseModal called');
   };
 
+  const [showPostFormModal, setShowPostFormModal] = useState(false);
+  const handleClosePostFormModal = () => {
+    setShowPostFormModal(false);
+    console.log('handleClosePostFormModal called');
+  };
+
   return (
     <div>
       <Header/>
-      <PostForm/>
+      <PostForm onClick={() => setShowPostFormModal(true)}/>
       {showModal && <AuthModal show={showModal} onClose={handleCloseModal}/>}
       <Posts/>
-      <PostFormModal/>
+      {showPostFormModal && <PostFormModal show={showPostFormModal} onClose={handleClosePostFormModal}/>}
     </div>
   );
 }
