@@ -205,12 +205,23 @@ app.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid password' });
     }
     const token = jwt.sign({ username }, jwtkey, { expiresIn: '1h' });
-    res.cookie
+    res.cookie('token', token, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', // Set to true in production
+      sameSite: 'Strict', 
+      maxAge: 3600000, // 1 hour in milliseconds
+    });
     res.status(200).json({ message: 'Login successful', token });
   } catch (error) { 
     res.status(500).json({ message: 'Error logging in', error });
   }   
 });
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.status(200).json({ message: 'Logout successful' });
+});
+
 
 app.get('/', (req, res) => {
   res.send('Hello World');
@@ -227,6 +238,20 @@ app.post('/posts', async(req, res) => {
   }
   try {
     const post = await Post.create({userId, title, content});
+    // Fetch updated list of posts
+    const posts = await Post.findAll({
+      include: [
+        { model: User, attributes: ['username'] },
+        {
+          model: Comment,
+          include: { model: User, attributes: ['id', 'username'] }
+        }
+      ],
+      order: [
+        ['createdAt', 'ASC'],
+        [{ model: Comment }, 'createdAt', 'ASC']
+      ]
+    });
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: 'Error creating post', error });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 
 function AuthModal({ show, onClose }) {
@@ -39,7 +40,6 @@ function AuthModal({ show, onClose }) {
         password
       });
 
-      console.log(result.data);
       if(result.data.success){
         alert('Registered Successfully');
       }
@@ -63,6 +63,7 @@ function AuthModal({ show, onClose }) {
       console.log(result.data);
       onClose();
       if(result.data.success){
+        Cookies.set('token', result.data.token, { expires: 1 });
         alert('Logged in Successfully');
       }
     } catch (error) {

@@ -1,7 +1,9 @@
 import React from "react";
 import axios from "axios";
+import { useEffect } from "react";
+import { useState } from "react";
 
-function PostFormModal({ show, onClose }) {
+function PostFormModal({ show, onClose, onPostSubmit   }) {
 
   const postform = async (e) => {
     e.preventDefault();
@@ -16,9 +18,10 @@ function PostFormModal({ show, onClose }) {
         content
       });
       console.log(result.data);
-      onClose();
       if(result.status === 201){
         alert('Post Created Successfully');
+        onClose();
+        onPostSubmit();
       }else {
         console.error('Post creation was not successful', result.data);
       }

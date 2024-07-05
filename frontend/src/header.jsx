@@ -2,12 +2,22 @@ import Logo from './handshake.svg';
 import User from './user.svg';
 import Button from './button.jsx';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 function Header() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownVisible(!dropdownVisible);
+  };
+
+  const logout = async () => {
+    const log = await axios.get('http://localhost:4000/logout');
+    if(log.status === 200){
+      alert('Logged Out Successfully');
+    } else {   
+      console.error('There was an error logging out the user!', log.data);
+    }
   };
 
   return (
@@ -17,7 +27,7 @@ function Header() {
           <img src={Logo} className="w-8 h-8 mr-4 ml-2" alt="logo" />
           <h1 className='text-2xl font-bold text-gray-300 px-3'>UniVerse</h1>
           <div className="flex flex-auto">
-            <Button className="flex ml-auto mr-2 border border-gray-900 rounded-full p-1">Log In</Button>
+            <Button className="flex ml-auto mr-2 border border-gray-900 rounded-full p-1" onClick={logout}>Log Out</Button>
             <Button className="flex ml-2 border border-gray-900 rounded-full p-1">Sign Up</Button>
           </div>
           <div className='flex ml-4 relative'>

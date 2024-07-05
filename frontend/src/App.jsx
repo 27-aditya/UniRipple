@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import './App.css';
 import Header from './header';
 import PostForm from './postform';
-import Thread from './thread';
 import AuthModal from './authmodal.jsx';
 import Posts from './post.jsx';
-import PostFormModal from './postformmodal.jsx';
 
 function App() {
 
@@ -15,11 +13,11 @@ function App() {
     console.log('handleCloseModal called');
   };
 
-  const [showPostFormModal, setShowPostFormModal] = useState(false);
+  /*const [showPostFormModal, setShowPostFormModal] = useState(false);
   const handleClosePostFormModal = () => {
     setShowPostFormModal(false);
     console.log('handleClosePostFormModal called');
-  };
+  };*/
 
   return (
     <div>
@@ -27,9 +25,9 @@ function App() {
       <PostForm onClick={() => setShowPostFormModal(true)}/>
       {showModal && <AuthModal show={showModal} onClose={handleCloseModal}/>}
       <Posts/>
-      {showPostFormModal && <PostFormModal show={showPostFormModal} onClose={handleClosePostFormModal}/>}
-    </div>
+      </div>
   );
 }
 
 export default App;
+    
