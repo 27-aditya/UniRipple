@@ -2,33 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PostFormModal from './postformmodal';
 
-
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [showPostForm, setShowPostForm] = useState(false);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/posts', { withCredentials: true });
-        setPosts(response.data);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const [showPostFormModal, setShowPostFormModal] = useState(false);
-  const handleClosePostFormModal = () => {
-    setShowPostFormModal(false);
-    console.log('handleClosePostFormModal called');
-  };
 
   const fetchPosts = async () => {
     try {
@@ -39,9 +15,17 @@ const Posts = () => {
     }
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   const handlePostSubmit = () => {
     fetchPosts(); // Fetch posts again after a new post is submitted
-    setShowPostFormModal(false);
+    setShowPostForm(false);
+  };
+
+  const handleClosePostForm = () => {
+    setShowPostForm(false);
   };
 
   const handleCommentSubmit = async (postId, commentBody, setCommentBody) => {
@@ -82,7 +66,9 @@ const Posts = () => {
       >
         Create Post
       </button>
-      {<PostFormModal show={showPostFormModal} onClose={() => setShowPostFormModal(false)} onPostSubmit={handlePostSubmit} />}
+      {showPostForm && (
+        <PostFormModal show={showPostForm} onClose={handleClosePostForm} onPostSubmit={handlePostSubmit} />
+      )}
       {posts.map(post => (
         <Post key={post.id} post={post} onCommentSubmit={handleCommentSubmit} />
       ))}
@@ -130,11 +116,7 @@ const Post = ({ post, onCommentSubmit }) => {
 };
 
 const Comment = ({ comment }) => {
-  console.log("User: ");
-  console.log(comment );
   const authorName = comment.User && comment.User.username ? comment.User.username : 'Unknown';
-  
-
 
   return (
     <div className="border-t border-gray-200 pt-2 mt-2">
