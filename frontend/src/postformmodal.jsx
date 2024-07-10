@@ -1,19 +1,18 @@
 import React from "react";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
 
 function PostFormModal({ show, onClose, onPostSubmit   }) {
 
   const postform = async (e) => {
     e.preventDefault();
+    const user = JSON.parse(localStorage.getItem('user'));
     const title = document.getElementById('title').value;
     console.log(title);
     const content = document.getElementById('content').value; 
     console.log(content);
     try {
       const result = await axios.post('http://localhost:4000/posts', {
-        userId: 15,
+        userId: user.id,
         title,
         content
       });

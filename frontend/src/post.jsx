@@ -5,7 +5,7 @@ import PostFormModal from './postformmodal';
 const Posts = () => {
   const [posts, setPosts] = useState([]);
   const [showPostForm, setShowPostForm] = useState(false);
-
+  
   const fetchPosts = async () => {
     try {
       const response = await axios.get('http://localhost:4000/posts', { withCredentials: true });
@@ -29,11 +29,14 @@ const Posts = () => {
   };
 
   const handleCommentSubmit = async (postId, commentBody, setCommentBody) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user);
+    console.log("Meow");
     try {
       const response = await axios.post(
         'http://localhost:4000/comments',
-        { postId, userId: 15, body: commentBody }, // Replace userId with actual logged-in user ID
-        { withCredentials: true }
+        { postId, userId:user.id, body: commentBody }, // Replace userId with actual logged-in user ID
+        { withCredentials: true }, 
       );
 
       const newComment = response.data;
@@ -116,8 +119,8 @@ const Post = ({ post, onCommentSubmit }) => {
 };
 
 const Comment = ({ comment }) => {
-  const authorName = comment.User && comment.User.username ? comment.User.username : 'Unknown';
-
+  console.log(comment);
+  const authorName = comment.User ? comment.User.username : 'Unknown';
   return (
     <div className="border-t border-gray-200 pt-2 mt-2">
       <p>{comment.body}</p>

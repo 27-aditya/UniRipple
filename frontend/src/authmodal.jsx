@@ -59,11 +59,15 @@ function AuthModal({ show, onClose }) {
         username,
         password
       });
-
+      localStorage.setItem('user', JSON.stringify(result.data.user));
+      console.log('User data stored:', localStorage.getItem('user'))
       console.log(result.data);
+      console.log("Hello World");
       onClose();
       if(result.data.success){
         Cookies.set('token', result.data.token, { expires: 1 });
+        localStorage.setItem('user', JSON.stringify(result.data.user));
+        console.log('User data stored:', localStorage.getItem('user'))
         alert('Logged in Successfully');
       }
     } catch (error) {
@@ -76,7 +80,7 @@ function AuthModal({ show, onClose }) {
   if (!show) return null; 
 
   return (
-    <div className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-60`}>
+    <div className={`fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-100`}>
       <div className="bg-cutcolor-darkgrey w-3/4 sm:w-1/2 md:w-3/4 mx-auto flex flex-col text-cutcolor-lightgrey p-5 self-center rounded-xl">
         <h1 className="flex mb-3 mx-6 text-sky-400 text-xl">
           {modalType === "login" ? "LogIN" : "Register"}
